@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SignupForm } from "@/app/components/signup-form";
 
 export default function Home() {
@@ -35,6 +36,12 @@ export default function Home() {
             We only need your country so your morning text arrives at the right
             local time.
           </p>
+          <Link
+            href="/test-sms"
+            className="inline-flex text-sm font-medium text-primary transition hover:opacity-80"
+          >
+            Send a Twilio test message
+          </Link>
         </div>
       </section>
     </main>

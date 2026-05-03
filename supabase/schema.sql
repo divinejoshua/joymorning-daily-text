@@ -15,3 +15,21 @@ create table if not exists public.daily_text_subscribers (
 
 create index if not exists daily_text_subscribers_delivery_idx
   on public.daily_text_subscribers (active, timezone, delivery_hour);
+
+create table if not exists public.daily_text_deliveries (
+  id uuid primary key default gen_random_uuid(),
+  subscriber_id uuid not null references public.daily_text_subscribers(id) on delete cascade,
+  phone_number text not null,
+  delivery_date date not null,
+  passage_reference text not null,
+  status text not null default 'pending' check (status in ('pending', 'sent', 'failed')),
+  twilio_sid text,
+  twilio_status text,
+  error_message text,
+  sent_at timestamptz,
+  created_at timestamptz not null default now(),
+  unique (subscriber_id, delivery_date, passage_reference)
+);
+
+create index if not exists daily_text_deliveries_subscriber_idx
+  on public.daily_text_deliveries (subscriber_id, delivery_date desc);

@@ -1,9 +1,7 @@
 import { findCountry } from "@/lib/countries";
+import { formatDailyPassageMessage } from "@/lib/daily-message";
 import { normalizePhoneNumber } from "@/lib/phone";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
-
-const DAILY_SAMPLE =
-  'Hello there, "Do not let your heart be troubled. Believe in God; believe also in me." - John 14:1';
 
 type SubscribePayload = {
   phoneNumber?: unknown;
@@ -16,7 +14,10 @@ export async function POST(request: Request) {
   try {
     payload = await request.json();
   } catch {
-    return Response.json({ message: "Send a valid signup request." }, { status: 400 });
+    return Response.json(
+      { message: "Send a valid signup request." },
+      { status: 400 },
+    );
   }
 
   if (
@@ -32,7 +33,10 @@ export async function POST(request: Request) {
   const country = findCountry(payload.countryCode);
 
   if (!country) {
-    return Response.json({ message: "Choose a supported country." }, { status: 400 });
+    return Response.json(
+      { message: "Choose a supported country." },
+      { status: 400 },
+    );
   }
 
   const normalizedPhoneNumber = normalizePhoneNumber(
@@ -60,7 +64,7 @@ export async function POST(request: Request) {
           country_calling_code: country.callingCode,
           timezone: country.timezone,
           delivery_hour: 7,
-          sample_message: DAILY_SAMPLE,
+          sample_message: formatDailyPassageMessage(),
           active: true,
           updated_at: new Date().toISOString(),
         },
